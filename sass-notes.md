@@ -1,12 +1,12 @@
 # Notes from [SASS](https://sass-lang.com/)
 
-The __@extend__ rule may only be used within style rules.
+The **@extend** rule may only be used within style rules.
 
 // This comment won't be included in the CSS.
 
-/* But this comment will, except in compressed mode. */
+/_ But this comment will, except in compressed mode. _/
 
-/*! This comment will be included even in compressed mode. */
+/_! This comment will be included even in compressed mode. _/
 
 The deeper you nest, the more bandwidth it takes to serve your CSS and the more work it takes the browser to render it. Keep those selectors shallow!
 
@@ -15,6 +15,7 @@ Some of these CSS properties have shorthand versions that use the namespace as t
 Exp:
 
 scss:
+
 ```scss
 .info-page {
   margin: auto {
@@ -25,6 +26,7 @@ scss:
 ```
 
 css:
+
 ```css
 .info-page {
   margin: auto;
@@ -34,7 +36,9 @@ css:
 ```
 
 ---
+
 scss:
+
 ```scss
 $primary: #81899b;
 $accent: #302e24;
@@ -47,11 +51,12 @@ $warn: #dfa612;
 
   // Even though this looks like a Sass variable, it's valid CSS so it's not
   // evaluated.
-  --consumed-by-js: $primary; 
+  --consumed-by-js: $primary;
 }
 ```
 
 css:
+
 ```css
 :root {
   --primary: #81899b;
@@ -66,6 +71,7 @@ css:
 Unfortunately, interpolation removes quotes from strings, which makes it difficult to use quoted strings as values for custom properties when they come from Sass variables. As a workaround, you can use the meta.inspect() function to preserve the quotes.
 
 scss:
+
 ```scss
 @use "sass:meta";
 
@@ -76,17 +82,19 @@ $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas;
   --font-family-sans-serif: #{meta.inspect($font-family-sans-serif)};
   --font-family-monospace: #{meta.inspect($font-family-monospace)};
 }
-````
+```
 
 css:
+
 ```css
 :root {
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto;
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas;
 }
 ```
 
-The parent selector, &, is a special selector invented by Sass that’s used in nested selectors to refer to the outer selector. 
+The parent selector, &, is a special selector invented by Sass that’s used in nested selectors to refer to the outer selector.
 
 Sass has a special kind of selector known as a “placeholder”. It looks and acts a lot like a class selector, but it starts with a % and it's not included in the CSS output. In fact, any complex selector (the ones between the commas) that even contains a placeholder selector isn't included in the CSS, nor is any style rule whose selectors all contain placeholders.
 
@@ -94,14 +102,17 @@ What’s the use of a selector that isn’t emitted? It can still be extended! U
 
 Ex:
 scss:
+
 ```scss
 %toolbelt {
   box-sizing: border-box;
-  border-top: 1px rgba(#000, .12) solid;
+  border-top: 1px rgba(#000, 0.12) solid;
   padding: 16px 0;
   width: 100%;
 
-  &:hover { border: 2px rgba(#000, .5) solid; }
+  &:hover {
+    border: 2px rgba(#000, 0.5) solid;
+  }
 }
 
 .action-buttons {
@@ -116,14 +127,17 @@ scss:
 ```
 
 css:
+
 ```css
-.action-buttons, .reset-buttons {
+.action-buttons,
+.reset-buttons {
   box-sizing: border-box;
   border-top: 1px rgba(0, 0, 0, 0.12) solid;
   padding: 16px 0;
   width: 100%;
 }
-.action-buttons:hover, .reset-buttons:hover {
+.action-buttons:hover,
+.reset-buttons:hover {
   border: 2px rgba(0, 0, 0, 0.5) solid;
 }
 
@@ -134,11 +148,71 @@ css:
 .reset-buttons {
   color: #cddc39;
 }
+```
 
+---
 
+### Sass Variables
 
+Sass variables are imperative, which means if you use a variable and then change its value, the earlier use will stay the same. CSS variables are declarative, which means if you change the value, it’ll affect both earlier uses and later uses.
 
+Sass variables, like all Sass identifiers, treat hyphens and underscores as identical. This means that `$font-size` and `$font_size` both refer to the same variable
 
+Variables defined with `!default` can be configured when loading a module with the @use rule. Sass libraries often use !default variables to allow their users to configure the library’s CSS.
 
+If you need to set a global variable’s value from within a local scope (such as in a mixin), you can use the !global flag. A variable declaration flagged as `!global` will always assign to the global scope.
 
+scss:
 
+```scss
+$variable: first global value;
+
+.content {
+  $variable: second global value !global;
+  value: $variable;
+}
+
+.sidebar {
+  value: $variable;
+}
+```
+
+css:
+
+```css
+.content {
+  value: second global value;
+}
+
+.sidebar {
+  value: second global value;
+}
+```
+
+_The !global flag may only be used to set a variable that has already been declared at the top level of a file. It may not be used to declare a new variable._
+
+Define a map from names to values that you can then access using variables.  
+scss:
+
+```scss
+@use "sass:map";
+
+$theme-colors: (
+  "success": #28a745,
+  "info": #17a2b8,
+  "warning": #ffc107,
+);
+
+.alert {
+  // Instead of $theme-color-#{warning}
+  background-color: map.get($theme-colors, "warning");
+}
+```
+
+css:
+
+```css
+.alert {
+  background-color: #ffc107;
+}
+```

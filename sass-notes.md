@@ -216,3 +216,13 @@ css:
   background-color: #ffc107;
 }
 ```
+
+---
+
+### Interpolation
+
+Interpolation can be used almost anywhere in a Sass stylesheet to embed the **result** of a SassScript expression into a chunk of CSS. Just wrap an expression in `#{}`
+
+Interpolation in SassScript always returns an __unquoted__ string.
+
+While it’s tempting to use this feature to convert quoted strings to unquoted strings, it’s a lot clearer to use the `string.unquote()` function. Instead of `#{$string}`.

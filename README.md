@@ -1,1 +1,1 @@
-# sass-notes
+# Personal sass-notes 

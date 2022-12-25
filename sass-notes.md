@@ -284,9 +284,47 @@ code {
 
 Built-in module variables (such as math.$pi) cannot be reassigned.
 
+---
 
+### @forward
 
+If you do write both a @forward and a @use for the same module in the same file, it’s always a good idea to write the @forward first. That way, if your users want to configure the forwarded module, that configuration will be applied to the @forward before your @use loads it without any configuration.
 
+This is written @forward "<url>" as <prefix>-*, and it adds the given prefix to the beginning of every mixin, function, and variable name forwarded by the module. For example, if the module defines a member named reset and it’s forwarded as list-*, downstream stylesheets will refer to it as list-reset.
+
+scss:
+```scss
+// src/_list.scss
+@mixin reset {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+```
+```scss
+// bootstrap.scss
+@forward "src/list" as list-*;
+```
+```scss
+// styles.scss
+@use "bootstrap";
+
+li {
+  @include bootstrap.list-reset;
+}
+```
+css:
+```css
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+```
+
+The `hide` form means that the listed members shouldn’t be forwarded, but everything else should. The `show` form means that only the named members should be forwarded. In both forms, you list the names of mixins, functions, or variables (including the $).
+
+---
 
 
 

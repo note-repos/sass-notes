@@ -226,3 +226,83 @@ Interpolation can be used almost anywhere in a Sass stylesheet to embed the **re
 Interpolation in SassScript always returns an __unquoted__ string.
 
 While it’s tempting to use this feature to convert quoted strings to unquoted strings, it’s a lot clearer to use the `string.unquote()` function. Instead of `#{$string}`.
+
+---
+
+### @use
+
+A stylesheet’s @use rules must come before any rules other than @forward, including style rules. However, you can declare variables before @use rules to use when configuring modules.
+
+You can do this by writing `@use "<url>" as <namespace>`.
+
+You can even load a module without a namespace by writing `@use "<url>" as *`
+
+Sass makes it easy to define a private member by starting its name with either `-` or `_`
+
+If you want to make a member private to an entire package rather than just a single module, just don’t forward its module from any of your package’s entrypoints (the stylesheets you tell your users to load to use your package). You can even hide that member while forwarding the rest of its module!
+
+scss:
+
+```scss
+// _library.scss
+$black: #000 !default;
+$border-radius: 0.25rem !default;
+$box-shadow: 0 0.5rem 1rem rgba($black, 0.15) !default;
+
+code {
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+}
+```
+```scss
+@use 'library' with (
+  $black: #222,
+  $border-radius: 0.1rem
+);
+```
+A stylesheet can define variables with the !default flag to make them configurable.
+Exm:
+scss:
+```scss
+// _library.scss
+$black: #000 !default;
+$border-radius: 0.25rem !default;
+$box-shadow: 0 0.5rem 1rem rgba($black, 0.15) !default;
+
+code {
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+}
+```
+```scss
+// style.scss
+@use 'library' with (
+  $black: #222,
+  $border-radius: 0.1rem
+);
+```
+
+Built-in module variables (such as math.$pi) cannot be reassigned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

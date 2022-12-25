@@ -326,6 +326,12 @@ The `hide` form means that the listed members shouldn’t be forwarded, but ever
 
 ---
 
+### @import
+The Sass team discourages the continued use of the @import rule. Sass will gradually phase it out over the next few years, and eventually remove it from the language entirely. Prefer the @use rule instead. (Note that only Dart Sass currently supports @use. Users of other implementations must use the @import rule instead.)
+
+---
+
+
 
 
 

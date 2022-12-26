@@ -331,13 +331,197 @@ The Sass team discourages the continued use of the @import rule. Sass will gradu
 
 ---
 
+### @mixin and @include
 
+Mixin names, like all Sass identifiers, treat hyphens and underscores as identical. This means that reset-list and reset_list both refer to the same mixin
 
+Argument lists can also have trailing commas! This makes it easier to avoid syntax errors when refactoring your stylesheets.
 
+scss:
+```scss
+@mixin rtl($property, $ltr-value, $rtl-value) {
+  #{$property}: $ltr-value;
 
+  [dir=rtl] & {
+    #{$property}: $rtl-value;
+  }
+}
 
+.sidebar {
+  @include rtl(float, left, right);
+}
+```
 
+css:
+```css
+.sidebar {
+  float: left;
+}
+[dir=rtl] .sidebar {
+  float: right;
+}
+```
 
+Normally, every argument a mixin declares must be passed when that mixin is included. However, you can make an argument optional by defining a default value which will be used if that argument isn’t passed. Default values use the same syntax as variable declarations: the variable name, followed by a colon and a SassScript expression.
+
+scss:
+```scss
+@mixin replace-text($image, $x: 50%, $y: 50%) {
+  text-indent: -99999em;
+  overflow: hidden;
+  text-align: left;
+
+  background: {
+    image: $image;
+    repeat: no-repeat;
+    position: $x $y;
+  }
+}
+
+.mail-icon {
+  @include replace-text(url("/images/mail.svg"), 0);
+}
+```
+
+css:
+```css
+.mail-icon {
+  text-indent: -99999em;
+  overflow: hidden;
+  text-align: left;
+  background-image: url("/images/mail.svg");
+  background-repeat: no-repeat;
+  background-position: 0 50%;
+}
+``` 
+Default values can be any SassScript expression, and they can even refer to earlier arguments!
+
+Keyword Arguments: When a mixin is included, arguments can be passed by name in addition to passing them by their position in the argument list.
+
+scss:
+```scss
+@mixin square($size, $radius: 0) {
+  width: $size;
+  height: $size;
+
+  @if $radius != 0 {
+    border-radius: $radius;
+  }
+}
+
+.avatar {
+  @include square(100px, $radius: 4px);
+}
+```
+css:
+```css
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+}
+``` 
+
+Sometimes it’s useful for a mixin to be able to take any number of arguments. If the last argument in a @mixin declaration ends in `...`, then all extra arguments to that mixin are passed to that argument as a list. This argument is known as an argument list.
+
+scss:
+```scss
+@mixin order($height, $selectors...) {
+  @for $i from 0 to length($selectors) {
+    #{nth($selectors, $i + 1)} {
+      position: absolute;
+      height: $height;
+      margin-top: $i * $height;
+    }
+  }
+}
+
+@include order(150px, "input.name", "input.address", "input.zip");
+```
+
+css:
+```css
+input.name {
+  position: absolute;
+  height: 150px;
+  margin-top: 0px;
+}
+
+input.address {
+  position: absolute;
+  height: 150px;
+  margin-top: 150px;
+}
+
+input.zip {
+  position: absolute;
+  height: 150px;
+  margin-top: 300px;
+}
+``` 
+
+In addition to taking arguments, a mixin can take an entire block of styles, known as a content block. A mixin can declare that it takes a content block by including the @content at-rule in its body. The content block is passed in using curly braces like any other block in Sass, and it’s injected in place of the @content rule.
+
+scss:
+```scss
+@mixin hover {
+  &:not([disabled]):hover {
+    @content;
+  }
+}
+
+.button {
+  border: 1px solid black;
+  @include hover {
+    border-width: 2px;
+  }
+}
+````
+
+css:
+```css
+.button {
+  border: 1px solid black;
+}
+.button:not([disabled]):hover {
+  border-width: 2px;
+}
+```
+A content block is lexically scoped, which means it can only see local variables in the scope where the mixin is included. It can’t see any variables that are defined in the mixin it’s passed to, even if they’re defined before the content block is invoked.
+
+---
+
+### functions
+
+While it’s technically possible for functions to have side-effects like setting global variables, this is strongly discouraged. Use mixins for side-effects, and use functions just to compute values.
+
+Sometimes it’s useful for a function to be able to take any number of arguments. If the last argument in a @function declaration ends in ..., then all extra arguments to that function are passed to that argument as a list. This argument is known as an argument list.
+
+scss:
+```scss
+SCSS SYNTAX
+@function sum($numbers...) {
+  $sum: 0;
+  @each $number in $numbers {
+    $sum: $sum + $number;
+  }
+  @return $sum;
+}
+
+.micro {
+  width: sum(50px, 30px, 100px);
+}
+```
+css:
+```css
+.micro {
+  width: 180px;
+}
+```
+
+It’s only allowed within a @function body, and each @function must end with a @return.
+
+Because any unknown function will be compiled to CSS, it’s easy to miss when you typo a function name. Consider running a CSS linter [stylelint](https://stylelint.io/) on your stylesheet’s output to be notified when this happens!
 
 
 

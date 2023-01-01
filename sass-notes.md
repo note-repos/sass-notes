@@ -681,7 +681,41 @@ You can pass any value to @debug, not just a string! It prints the same represen
 
 ---
 
+### @at-root
 
+The @at-root rule is usually written @at-root <selector> { ... } and causes everything within it to be emitted at the root of the document instead of using the normal nesting. It's most often used when doing advanced nesting with the SassScript parent selector and selector functions.
 
+For example, suppose you want to write a selector that matches the outer selector and an element selector. You could write a mixin like this one that uses the selector.unify() function to combine & with a user’s selector.
 
+scss:
+```scss
+@use "sass:selector";
+
+@mixin unify-parent($child) {
+  @at-root #{selector.unify(&, $child)} {
+    @content;
+  }
+}
+
+.wrapper .field {
+  @include unify-parent("input") {
+    /* ... */
+  }
+  @include unify-parent("select") {
+    /* ... */
+  }
+}
+```
+css:
+```css
+.wrapper input.field {
+  /* ... */
+}
+
+.wrapper select.field {
+  /* ... */
+}
+```
+
+---
 

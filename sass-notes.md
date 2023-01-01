@@ -664,6 +664,23 @@ $known-prefixes: webkit, moz, ms, o;
 
 ---
 
+### @debug
+
+Sometimes it’s useful to see the value of a variable or expression while you’re developing your stylesheet. That’s what the @debug rule is for: it’s written @debug <expression>, and it prints the value of that expression, along with the filename and line number.
+```scss
+@mixin inset-divider-offset($offset, $padding) {
+  $divider-offset: (2 * $padding) + $offset;
+  @debug "divider offset: #{$divider-offset}";
+
+  margin-left: $divider-offset;
+  width: calc(100% - #{$divider-offset});
+}
+```
+
+You can pass any value to @debug, not just a string! It prints the same representation of that value as the meta.inspect() function.
+
+---
+
 
 
 

@@ -523,11 +523,84 @@ It’s only allowed within a @function body, and each @function must end with a 
 
 Because any unknown function will be compiled to CSS, it’s easy to miss when you typo a function name. Consider running a CSS linter [stylelint](https://stylelint.io/) on your stylesheet’s output to be notified when this happens!
 
+---
 
+### @extend
 
+@extend <selector>, and it tells Sass that one selector should inherit the styles of another.
 
+scss:
+```scss
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
 
+  &--serious {
+    @extend .error;
+    border-width: 3px;
+  }
+}
+```
+css:
+```css
+.error, .error--serious {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.error--serious {
+  border-width: 3px;
+}
+````
 
+Of course, selectors aren’t just used on their own in style rules. Sass knows to extend everywhere the selector is used. This ensures that your elements are styled exactly as if they matched the extended selector.
+
+scss:
+```scss
+.error:hover {
+  background-color: #fee;
+}
+
+.error--serious {
+  @extend .error;
+  border-width: 3px;
+}
+````
+css:
+```css
+.error:hover, .error--serious:hover {
+  background-color: #fee;
+}
+
+.error--serious {
+  border-width: 3px;
+}
+```
+
+Extends are resolved after the rest of your stylesheet is compiled. In particular, it happens after parent selectors are resolved. This means that if you @extend .error, it won’t affect the inner selector in .error { &__icon { ... } }. It also means that parent selectors in SassScript can’t see the results of extend.
+
+Like module members, a placeholder selector can be marked private by starting its name with either - or _. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
+
+Like module members, a placeholder selector can be marked private by starting its name with either - or _. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
+
+As a rule of thumb, extends are the best option when you’re expressing a relationship between semantic classes (or other semantic selectors). Because an element with class .error--serious is an error, it makes sense for it to extend .error. But for non-semantic collections of styles, writing a mixin can avoid cascade headaches and make it easier to configure down the line.
+
+While @extend is allowed within @media and other CSS at-rules, it’s not allowed to extend selectors that appear outside its at-rule. This is because the extending selector only applies within the given media context, and there’s no way to make sure that restriction is preserved in the generated selector without duplicating the entire style rule.
+
+scss:
+```scss
+@media screen and (max-width: 600px) {
+  .error--serious {
+    @extend .error;
+    //      ^^^^^^
+    // Error: ".error" was extended in @media, but used outside it.
+  }
+}
+
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+```
 
 
 

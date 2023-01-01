@@ -924,7 +924,33 @@ Although @while is necessary for a few particularly complex stylesheets, you’r
 
 ---
 
+### From CSS
 
+Sass supports all the at-rules that are part of CSS proper. To stay flexible and forwards-compatible with future versions of CSS, Sass has general support that covers almost all at-rules by default. A CSS at-rule is written @<name> <value>, @<name> { ... }, or @<name> <value> { ... }. The name must be an identifier, and the value (if one exists) can be pretty much anything. Both the name and the value can contain interpolation.
+
+If a CSS at-rule is nested within a style rule, the two automatically swap positions so that the at-rule is at the top level of the CSS output and the style rule is within it. This makes it easy to add conditional styling without having to rewrite the style rule’s selector.
+
+scss
+```scss
+.print-only {
+  display: none;
+
+  @media print { display: block; }
+}
+```
+css:
+```css
+.print-only {
+  display: none;
+}
+@media print {
+  .print-only {
+    display: block;
+  }
+}
+```
+
+---
 
 
 

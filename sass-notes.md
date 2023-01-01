@@ -223,7 +223,7 @@ css:
 
 Interpolation can be used almost anywhere in a Sass stylesheet to embed the **result** of a SassScript expression into a chunk of CSS. Just wrap an expression in `#{}`
 
-Interpolation in SassScript always returns an __unquoted__ string.
+Interpolation in SassScript always returns an **unquoted** string.
 
 While it’s tempting to use this feature to convert quoted strings to unquoted strings, it’s a lot clearer to use the `string.unquote()` function. Instead of `#{$string}`.
 
@@ -254,15 +254,18 @@ code {
   box-shadow: $box-shadow;
 }
 ```
+
 ```scss
-@use 'library' with (
+@use "library" with (
   $black: #222,
   $border-radius: 0.1rem
 );
 ```
+
 A stylesheet can define variables with the !default flag to make them configurable.
 Exm:
 scss:
+
 ```scss
 // _library.scss
 $black: #000 !default;
@@ -274,9 +277,10 @@ code {
   box-shadow: $box-shadow;
 }
 ```
+
 ```scss
 // style.scss
-@use 'library' with (
+@use "library" with (
   $black: #222,
   $border-radius: 0.1rem
 );
@@ -290,9 +294,10 @@ Built-in module variables (such as math.$pi) cannot be reassigned.
 
 If you do write both a @forward and a @use for the same module in the same file, it’s always a good idea to write the @forward first. That way, if your users want to configure the forwarded module, that configuration will be applied to the @forward before your @use loads it without any configuration.
 
-This is written @forward "<url>" as <prefix>-*, and it adds the given prefix to the beginning of every mixin, function, and variable name forwarded by the module. For example, if the module defines a member named reset and it’s forwarded as list-*, downstream stylesheets will refer to it as list-reset.
+This is written @forward "<url>" as <prefix>-_, and it adds the given prefix to the beginning of every mixin, function, and variable name forwarded by the module. For example, if the module defines a member named reset and it’s forwarded as list-_, downstream stylesheets will refer to it as list-reset.
 
 scss:
+
 ```scss
 // src/_list.scss
 @mixin reset {
@@ -301,10 +306,12 @@ scss:
   list-style: none;
 }
 ```
+
 ```scss
 // bootstrap.scss
 @forward "src/list" as list-*;
 ```
+
 ```scss
 // styles.scss
 @use "bootstrap";
@@ -313,7 +320,9 @@ li {
   @include bootstrap.list-reset;
 }
 ```
+
 css:
+
 ```css
 li {
   margin: 0;
@@ -327,6 +336,7 @@ The `hide` form means that the listed members shouldn’t be forwarded, but ever
 ---
 
 ### @import
+
 The Sass team discourages the continued use of the @import rule. Sass will gradually phase it out over the next few years, and eventually remove it from the language entirely. Prefer the @use rule instead. (Note that only Dart Sass currently supports @use. Users of other implementations must use the @import rule instead.)
 
 ---
@@ -338,11 +348,12 @@ Mixin names, like all Sass identifiers, treat hyphens and underscores as identic
 Argument lists can also have trailing commas! This makes it easier to avoid syntax errors when refactoring your stylesheets.
 
 scss:
+
 ```scss
 @mixin rtl($property, $ltr-value, $rtl-value) {
   #{$property}: $ltr-value;
 
-  [dir=rtl] & {
+  [dir="rtl"] & {
     #{$property}: $rtl-value;
   }
 }
@@ -353,11 +364,12 @@ scss:
 ```
 
 css:
+
 ```css
 .sidebar {
   float: left;
 }
-[dir=rtl] .sidebar {
+[dir="rtl"] .sidebar {
   float: right;
 }
 ```
@@ -365,6 +377,7 @@ css:
 Normally, every argument a mixin declares must be passed when that mixin is included. However, you can make an argument optional by defining a default value which will be used if that argument isn’t passed. Default values use the same syntax as variable declarations: the variable name, followed by a colon and a SassScript expression.
 
 scss:
+
 ```scss
 @mixin replace-text($image, $x: 50%, $y: 50%) {
   text-indent: -99999em;
@@ -384,6 +397,7 @@ scss:
 ```
 
 css:
+
 ```css
 .mail-icon {
   text-indent: -99999em;
@@ -393,12 +407,14 @@ css:
   background-repeat: no-repeat;
   background-position: 0 50%;
 }
-``` 
+```
+
 Default values can be any SassScript expression, and they can even refer to earlier arguments!
 
 Keyword Arguments: When a mixin is included, arguments can be passed by name in addition to passing them by their position in the argument list.
 
 scss:
+
 ```scss
 @mixin square($size, $radius: 0) {
   width: $size;
@@ -413,18 +429,21 @@ scss:
   @include square(100px, $radius: 4px);
 }
 ```
+
 css:
+
 ```css
 .avatar {
   width: 100px;
   height: 100px;
   border-radius: 4px;
 }
-``` 
+```
 
 Sometimes it’s useful for a mixin to be able to take any number of arguments. If the last argument in a @mixin declaration ends in `...`, then all extra arguments to that mixin are passed to that argument as a list. This argument is known as an argument list.
 
 scss:
+
 ```scss
 @mixin order($height, $selectors...) {
   @for $i from 0 to length($selectors) {
@@ -440,6 +459,7 @@ scss:
 ```
 
 css:
+
 ```css
 input.name {
   position: absolute;
@@ -458,11 +478,12 @@ input.zip {
   height: 150px;
   margin-top: 300px;
 }
-``` 
+```
 
 In addition to taking arguments, a mixin can take an entire block of styles, known as a content block. A mixin can declare that it takes a content block by including the @content at-rule in its body. The content block is passed in using curly braces like any other block in Sass, and it’s injected in place of the @content rule.
 
 scss:
+
 ```scss
 @mixin hover {
   &:not([disabled]):hover {
@@ -476,9 +497,10 @@ scss:
     border-width: 2px;
   }
 }
-````
+```
 
 css:
+
 ```css
 .button {
   border: 1px solid black;
@@ -487,6 +509,7 @@ css:
   border-width: 2px;
 }
 ```
+
 A content block is lexically scoped, which means it can only see local variables in the scope where the mixin is included. It can’t see any variables that are defined in the mixin it’s passed to, even if they’re defined before the content block is invoked.
 
 ---
@@ -498,9 +521,9 @@ While it’s technically possible for functions to have side-effects like settin
 Sometimes it’s useful for a function to be able to take any number of arguments. If the last argument in a @function declaration ends in ..., then all extra arguments to that function are passed to that argument as a list. This argument is known as an argument list.
 
 scss:
+
 ```scss
-SCSS SYNTAX
-@function sum($numbers...) {
+SCSS SYNTAX @function sum($numbers...) {
   $sum: 0;
   @each $number in $numbers {
     $sum: $sum + $number;
@@ -512,7 +535,9 @@ SCSS SYNTAX
   width: sum(50px, 30px, 100px);
 }
 ```
+
 css:
+
 ```css
 .micro {
   width: 180px;
@@ -530,6 +555,7 @@ Because any unknown function will be compiled to CSS, it’s easy to miss when y
 @extend <selector>, and it tells Sass that one selector should inherit the styles of another.
 
 scss:
+
 ```scss
 .error {
   border: 1px #f00;
@@ -541,20 +567,24 @@ scss:
   }
 }
 ```
+
 css:
+
 ```css
-.error, .error--serious {
+.error,
+.error--serious {
   border: 1px #f00;
   background-color: #fdd;
 }
 .error--serious {
   border-width: 3px;
 }
-````
+```
 
 Of course, selectors aren’t just used on their own in style rules. Sass knows to extend everywhere the selector is used. This ensures that your elements are styled exactly as if they matched the extended selector.
 
 scss:
+
 ```scss
 .error:hover {
   background-color: #fee;
@@ -564,10 +594,13 @@ scss:
   @extend .error;
   border-width: 3px;
 }
-````
+```
+
 css:
+
 ```css
-.error:hover, .error--serious:hover {
+.error:hover,
+.error--serious:hover {
   background-color: #fee;
 }
 
@@ -576,17 +609,18 @@ css:
 }
 ```
 
-Extends are resolved after the rest of your stylesheet is compiled. In particular, it happens after parent selectors are resolved. This means that if you @extend .error, it won’t affect the inner selector in .error { &__icon { ... } }. It also means that parent selectors in SassScript can’t see the results of extend.
+Extends are resolved after the rest of your stylesheet is compiled. In particular, it happens after parent selectors are resolved. This means that if you @extend .error, it won’t affect the inner selector in .error { &\_\_icon { ... } }. It also means that parent selectors in SassScript can’t see the results of extend.
 
-Like module members, a placeholder selector can be marked private by starting its name with either - or _. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
+Like module members, a placeholder selector can be marked private by starting its name with either - or \_. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
 
-Like module members, a placeholder selector can be marked private by starting its name with either - or _. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
+Like module members, a placeholder selector can be marked private by starting its name with either - or \_. A private placeholder selector can only be extended within the stylesheet that defines it. To any other stylesheets, it will look as though that selector doesn’t exist.
 
 As a rule of thumb, extends are the best option when you’re expressing a relationship between semantic classes (or other semantic selectors). Because an element with class .error--serious is an error, it makes sense for it to extend .error. But for non-semantic collections of styles, writing a mixin can avoid cascade headaches and make it easier to configure down the line.
 
 While @extend is allowed within @media and other CSS at-rules, it’s not allowed to extend selectors that appear outside its at-rule. This is because the extending selector only applies within the given media context, and there’s no way to make sure that restriction is preserved in the generated selector without duplicating the entire style rule.
 
 scss:
+
 ```scss
 @media screen and (max-width: 600px) {
   .error--serious {
@@ -611,6 +645,7 @@ When writing mixins and functions that take arguments, you usually want to ensur
 Sass makes this easy with the @error rule, which is written @error <expression>. It prints the value of the expression (usually a string) along with a stack trace indicating how the current mixin or function was called. Once the error is printed, Sass stops compiling the stylesheet and tells whatever system is running it that an error occurred.
 
 SCSS:
+
 ```scss
 @mixin reflexive-position($property, $value) {
   @if $property != left and $property != right {
@@ -622,7 +657,7 @@ SCSS:
 
   left: $left-value;
   right: $right-value;
-  [dir=rtl] & {
+  [dir="rtl"] & {
     left: $right-value;
     right: $left-value;
   }
@@ -642,6 +677,7 @@ SCSS:
 When writing mixins and functions, you may want to discourage users from passing certain arguments or certain values. They may be passing legacy arguments that are now deprecated, or they may be calling your API in a way that’s not quite optimal.
 
 The @warn rule is designed just for that. It’s written @warn <expression> and it prints the value of the expression (usually a string) for the user, along with a stack trace indicating how the current mixin or function was called. Unlike the @error rule, though, it doesn’t stop Sass entirely.
+
 ```scss
 $known-prefixes: webkit, moz, ms, o;
 
@@ -667,6 +703,7 @@ $known-prefixes: webkit, moz, ms, o;
 ### @debug
 
 Sometimes it’s useful to see the value of a variable or expression while you’re developing your stylesheet. That’s what the @debug rule is for: it’s written @debug <expression>, and it prints the value of that expression, along with the filename and line number.
+
 ```scss
 @mixin inset-divider-offset($offset, $padding) {
   $divider-offset: (2 * $padding) + $offset;
@@ -688,6 +725,7 @@ The @at-root rule is usually written @at-root <selector> { ... } and causes ever
 For example, suppose you want to write a selector that matches the outer selector and an element selector. You could write a mixin like this one that uses the selector.unify() function to combine & with a user’s selector.
 
 scss:
+
 ```scss
 @use "sass:selector";
 
@@ -706,7 +744,9 @@ scss:
   }
 }
 ```
+
 css:
+
 ```css
 .wrapper input.field {
   /* ... */
@@ -719,3 +759,12 @@ css:
 
 ---
 
+### @if and @else
+
+Anywhere true or false are allowed, you can use other values as well. The values false and null are falsey, which means Sass considers them to indicate falsehood and cause conditions to fail. Every other value is considered truthy, so Sass considers them to work like true and cause conditions to succeed.
+
+For example, if you want to check if a string contains a space, you can just write string.index($string, " "). The string.index() function returns null if the string isn’t found and a number otherwise.
+
+_Some languages consider more values falsey than just false and null. Sass isn’t one of those languages! Empty strings, empty lists, and the number 0 are all truthy in Sass._
+
+---

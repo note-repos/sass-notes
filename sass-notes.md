@@ -952,6 +952,24 @@ css:
 
 ---
 
+### using maps
+
+Maps are all about associating keys and values, so naturally there’s a way to get the value associated with a key: the map.get($map, $key) function! This function returns the value in the map associated with the given key. It returns null if the map doesn’t contain the key.
+
+```scss
+$font-weights: ("regular": 400, "medium": 500, "bold": 700);
+
+@debug map.get($font-weights, "medium"); // 500
+@debug map.get($font-weights, "extra-bold"); // null
+```
+
+Note that because Sass maps are immutable, map.set() and map.merge() do not modify the original list.
+
+Maps in Sass are immutable, which means that the contents of a map value never changes. Sass’s map functions all return new maps rather than modifying the originals
+
+---
+
+
 
 
 

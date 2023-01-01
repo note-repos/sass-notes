@@ -918,7 +918,11 @@ ul:nth-child(3n + 3) {
 
 ---
 
+### @while
 
+Although @while is necessary for a few particularly complex stylesheets, you’re usually better of using either @each or @for if either of them will work. They’re clearer for the reader, and often faster to compile as well.
+
+---
 
 
 

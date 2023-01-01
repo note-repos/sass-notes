@@ -768,3 +768,145 @@ For example, if you want to check if a string contains a space, you can just wri
 _Some languages consider more values falsey than just false and null. Sass isn’t one of those languages! Empty strings, empty lists, and the number 0 are all truthy in Sass._
 
 ---
+
+### @each
+
+`@each <variable> in <expression> { ... }`, where the expression returns a list. The block is evaluated for each element of the list in turn, which is assigned to the given variable name.
+scss:
+```scss
+$sizes: 40px, 50px, 80px;
+
+@each $size in $sizes {
+  .icon-#{$size} {
+    font-size: $size;
+    height: $size;
+    width: $size;
+  }
+}
+```
+css:
+```css
+.icon-40px {
+  font-size: 40px;
+  height: 40px;
+  width: 40px;
+}
+
+.icon-50px {
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+}
+
+.icon-80px {
+  font-size: 80px;
+  height: 80px;
+  width: 80px;
+}
+```
+
+You can also use @each to iterate over every key/value pair in a map by writing it `@each <variable>, <variable> in <expression> { ... }`. The key is assigned to the first variable name, and the element is assigned to the second.
+
+scss:
+```scss
+$icons: ("eye": "\f112", "start": "\f12e", "stop": "\f12f");
+
+@each $name, $glyph in $icons {
+  .icon-#{$name}:before {
+    display: inline-block;
+    font-family: "Icon Font";
+    content: $glyph;
+  }
+}
+
+```
+css:
+```css
+@charset "UTF-8";
+.icon-eye:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+}
+
+.icon-start:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+}
+
+.icon-stop:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+}
+```
+
+If you have a list of lists, you can use @each to automatically assign variables to each of the values from the inner lists by writing it `@each <variable...> in <expression> { ... }`. This is known as destructuring, since the variables match the structure of the inner lists. Each variable name is assigned to the value at the corresponding position in the list, or null if the list dosn’t have enough values.
+
+scss:
+```scss
+$icons:
+  "eye" "\f112" 12px,
+  "start" "\f12e" 16px,
+  "stop" "\f12f" 10px;
+
+@each $name, $glyph, $size in $icons {
+  .icon-#{$name}:before {
+    display: inline-block;
+    font-family: "Icon Font";
+    content: $glyph;
+    font-size: $size;
+  }
+
+```
+css:
+```css
+@charset "UTF-8";
+.icon-eye:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+  font-size: 12px;
+}
+
+.icon-start:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+  font-size: 16px;
+}
+
+.icon-stop:before {
+  display: inline-block;
+  font-family: "Icon Font";
+  content: "";
+  font-size: 10px;
+}
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

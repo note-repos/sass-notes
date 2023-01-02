@@ -969,16 +969,112 @@ Maps in Sass are immutable, which means that the contents of a map value never c
 
 ---
 
+### sass:color
 
+The $red, $green, and $blue arguments must be unitless and between -255 and 255 (inclusive).
 
+The $hue argument must have either the unit deg or no unit. 
+ 
+The $saturation, $lightness, $whiteness, and $blackness arguments must be between -100% and 100% (inclusive), and may not be unitless. 
+ 
+The $alpha argument must be unitless and between -1 and 1 (inclusive).
 
+```scss
+@debug color.adjust(#6b717f, $red: 15); // #7a717f
 
+@debug color.adjust(#d2e1dd, $red: -10, $blue: 10); // #c8e1e7
 
+@debug color.adjust(#998099, $lightness: -30%, $alpha: -0.4); // rgba(71, 57, 71, 0.6)
 
+```
 
+```scss
+color.red() for getting a color’s red channel.
+color.green() for getting a color’s green channel.
+color.hue() for getting a color’s hue.
+color.saturation() for getting a color’s saturation.
+color.lightness() for getting a color’s lightness.
+color.whiteness() for getting a color’s whiteness.
+color.alpha() for getting a color’s alpha channel.
+color.red() for getting a color’s red channel.
+color.green() for getting a color’s green channel.
+color.hue() for getting a color’s hue.
+color.saturation() for getting a color’s saturation.
+color.lightness() for getting a color’s lightness.
+color.whiteness() for getting a color’s whiteness.
+color.blackness() for getting a color’s blackness.
+color.alpha() for getting a color’s alpha channel.
+``` 
 
+```scss
+color.complement($color)
+complement($color) //=> color 
 
+// Hue 222deg becomes 42deg.
+@debug color.complement(#6b717f); // #7f796b
 
+// Hue 164deg becomes 344deg.
+@debug color.complement(#d2e1dd); // #e1d2d6
+
+// Hue 210deg becomes 30deg.
+@debug color.complement(#036); // #663300
+```
+
+This is identical to `color.adjust($color, $hue: 180deg)`
+
+To makes $color darker.
+```scss
+darken($color, $amount) //=> color 
+```
+
+The `darken()` function decreases lightness by a fixed amount, which is often not the desired effect. To make a color a certain percentage darker than it was before, use `color.scale()` instead.
+
+```scss
+// #036 has lightness 20%, so when darken() subtracts 30% it just returns black.
+@debug darken(#036, 30%); // black
+
+// scale() instead makes it 30% darker than it was originally.
+@debug color.scale(#036, $lightness: -30%); // #002447
+```
+
+To makes $color less saturated.
+```scss
+desaturate($color, $amount) //=> color 
+```
+```scss
+// #d2e1dd has saturation 20%, so when desaturate() subtracts 30% it just
+// returns gray.
+@debug desaturate(#d2e1dd, 30%); // #dadada
+
+// scale() instead makes it 30% less saturated than it was originally.
+@debug color.scale(#6b717f, $saturation: -30%); // #6e727c
+```
+
+to returns the inverse or negative of $color.
+
+```scss
+color.invert($color, $weight: 100%)
+invert($color, $weight: 100%) //=> color 
+@debug color.invert(#b37399); // #4c8c66
+@debug color.invert(black); // white
+@debug color.invert(#550e0c, 20%); // #663b3a
+```
+
+To return a color that’s a mixture of $color1 and $color2.
+
+```scss
+color.mix($color1, $color2, $weight: 50%)
+mix($color1, $color2, $weight: 50%) //=> color 
+@debug color.mix(#036, #d2e1dd); // #698aa2
+@debug color.mix(#036, #d2e1dd, 75%); // #355f84
+@debug color.mix(#036, #d2e1dd, 25%); // #9eb6bf
+@debug color.mix(rgba(242, 236, 228, 0.5), #6b717f); // rgba(141, 144, 152, 0.75)
+
+// A larger weight indicates that more of $color1 should be used, and a smaller weight indicates that more of $color2 should be used.
+
+```
+
+---
 
 
 
